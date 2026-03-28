@@ -1,0 +1,94 @@
+.app {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition: background var(--transition-smooth), color var(--transition-smooth);
+  position: relative;
+}
+
+.app::before {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, var(--bg-mesh-1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  right: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, var(--bg-mesh-2) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-body {
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1.75rem 2.5rem;
+  overflow-y: auto;
+  min-height: calc(100vh - 64px);
+}
+
+.view-wrapper {
+  animation: scaleIn var(--transition-smooth) ease;
+}
+
+.view-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.view-loader-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-body {
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding: 1.25rem 1rem;
+    min-height: auto;
+    padding-bottom: 5.5rem;
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 199;
+    backdrop-filter: blur(4px);
+    animation: fadeIn var(--transition-fast);
+  }
+}
