@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import axios from 'axios';
 import { FiBell } from 'react-icons/fi';
 import './AddReminder.css';
 
@@ -22,35 +23,53 @@ const COLORS = [
 
 export default function AddReminder({ onAdd }) {
   const [title, setTitle] = useState('');
+  const [email, setEmail] = useState('');
   const [datetime, setDatetime] = useState('');
   const [repeat, setRepeat] = useState('none');
   const [color, setColor] = useState(COLORS[0].hex);
 
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
+
       const trimmed = title.trim();
-      if (!trimmed || !datetime) return;
 
-      onAdd({
-        id: crypto.randomUUID(),
-        title: trimmed,
-        datetime,
-        repeat,
-        color,
-        completed: false,
-        createdAt: new Date().toISOString(),
-      });
+      if (!trimmed || !datetime || !email) return;
 
-      setTitle('');
-      setDatetime('');
-      setRepeat('none');
-      setColor(COLORS[0].hex);
+      try {
+        await axios.post('http://localhost:5000/api/reminders', {
+          title: trimmed,
+          email,
+          reminderTime: datetime,
+        });
+
+        onAdd({
+          id: crypto.randomUUID(),
+          title: trimmed,
+          email,
+          datetime,
+          repeat,
+          color,
+          completed: false,
+          createdAt: new Date().toISOString(),
+        });
+
+        alert('Reminder saved successfully');
+
+        setTitle('');
+        setEmail('');
+        setDatetime('');
+        setRepeat('none');
+        setColor(COLORS[0].hex);
+      } catch (error) {
+        console.log(error);
+        alert('Failed to save reminder');
+      }
     },
-    [title, datetime, repeat, color, onAdd]
+    [title, email, datetime, repeat, color, onAdd]
   );
 
-  const canSubmit = title.trim() && datetime;
+  const canSubmit = title.trim() && datetime && email;
 
   return (
     <form className="add-reminder" onSubmit={handleSubmit}>
@@ -67,6 +86,18 @@ export default function AddReminder({ onAdd }) {
             placeholder="Remind me to..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="reminder-input"
+          />
+        </div>
+
+        <div className="form-field span-2">
+          <label htmlFor="reminder-email">Email</label>
+          <input
+            id="reminder-email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="reminder-input"
           />
         </div>
@@ -91,7 +122,9 @@ export default function AddReminder({ onAdd }) {
             className="reminder-input"
           >
             {REPEAT_OPTIONS.map((r) => (
-              <option key={r.value} value={r.value}>{r.label}</option>
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
             ))}
           </select>
         </div>
