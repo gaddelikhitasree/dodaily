@@ -37,7 +37,7 @@ export default function AddReminder({ onAdd }) {
       if (!trimmed || !datetime || !email) return;
 
       try {
-        await axios.post('http://localhost:5000/api/reminders', {
+        await axios.post('https://dodaily-backend-3u2t.onrender.com', {
           title: trimmed,
           email,
           reminderTime: datetime,
