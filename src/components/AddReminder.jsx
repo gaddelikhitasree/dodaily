@@ -40,7 +40,7 @@ export default function AddReminder({ onAdd }) {
         await axios.post('https://dodaily-backend-3u2t.onrender.com/api/reminders', {
           title: trimmed,
           email,
-          reminderTime: datetime,
+          reminderTime: new Date(datetime).toISOString(),
         });
 
         onAdd({
